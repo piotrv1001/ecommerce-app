@@ -1,9 +1,10 @@
-import { Button } from "@/components/ui/button";
+import ProductList from "@/components/product-list";
+import Container from "@/components/container";
 
 export default function App() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-svh">
-      <Button>Click me</Button>
-    </div>
+    <Container>
+      <ProductList />
+    </Container>
   );
 }
