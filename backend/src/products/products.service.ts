@@ -11,8 +11,17 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
-  async findAll(): Promise<Product[]> {
-    return this.productModel.find().exec();
+  async findAll(search?: string): Promise<Product[]> {
+    if (!search) return this.productModel.find().exec();
+
+    return this.productModel
+      .find({
+        $or: [
+          { $text: { $search: search } },
+          { title: { $regex: search, $options: 'i' } },
+        ],
+      })
+      .exec();
   }
 
   async findById(id: string): Promise<Product> {

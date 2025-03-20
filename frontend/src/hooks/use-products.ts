@@ -3,22 +3,31 @@ import { useEffect, useState } from "react";
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch("/api/products");
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        if (error instanceof Error) {
-          setError(error.message);
-        }
-      }
-    };
     fetchProducts();
   }, []);
 
-  return { products, error };
+  const fetchProducts = async () => {
+    try {
+      let apiEndpoint = "/api/products";
+      if (search) {
+        apiEndpoint += `?search=${search}`;
+      }
+      const response = await fetch(apiEndpoint);
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    }
+  };
+
+  const updateSearch = (search: string) => {
+    setSearch(search);
+  };
+
+  return { products, search, updateSearch, fetchProducts };
 };
