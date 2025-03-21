@@ -4,6 +4,7 @@ import { Product } from './schemas/products.schema';
 import { Model } from 'mongoose';
 import { CreateProductDto } from './dto/create-product-dto';
 import { UpdateProductDto } from './dto/update-product-dto';
+import { Pagination } from 'src/types/pagination';
 
 @Injectable()
 export class ProductsService {
@@ -11,17 +12,36 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
-  async findAll(search?: string): Promise<Product[]> {
-    if (!search) return this.productModel.find().exec();
+  async findAll(
+    search?: string,
+    limit = 10,
+    cursor?: string,
+  ): Promise<Pagination<Product[]>> {
+    const filter: any = {};
 
-    return this.productModel
-      .find({
-        $or: [
-          { $text: { $search: search } },
-          { title: { $regex: search, $options: 'i' } },
-        ],
-      })
+    if (search) {
+      filter.$or = [
+        { $text: { $search: search } },
+        { title: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    if (cursor) {
+      filter._id = { $gt: cursor };
+    }
+
+    const products = await this.productModel
+      .find(filter)
+      .sort({ _id: 1 })
+      .limit(limit)
       .exec();
+
+    return {
+      data: products,
+      nextCursor: products.length
+        ? products[products.length - 1]._id.toString()
+        : undefined,
+    };
   }
 
   async findById(id: string): Promise<Product> {
