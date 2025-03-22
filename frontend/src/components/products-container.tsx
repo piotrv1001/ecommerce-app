@@ -14,7 +14,7 @@ export default function ProductsContainer() {
     products,
     search,
     updateSearch,
-    fetchProducts,
+    refetch,
     ref,
     hasNextPage,
     isFetchingNextPage,
@@ -31,7 +31,7 @@ export default function ProductsContainer() {
         <ProductSearchBar
           search={search}
           onSearchChange={updateSearch}
-          onSubmit={fetchProducts}
+          onSubmit={refetch}
         />
         {isLoggedIn ? (
           <Button onClick={handleLogout}>Logout</Button>
