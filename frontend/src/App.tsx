@@ -6,7 +6,7 @@ const queryClient = new QueryClient();
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ProductsContainer />
+      <ProductsContainer />      
     </QueryClientProvider>
   );
 }

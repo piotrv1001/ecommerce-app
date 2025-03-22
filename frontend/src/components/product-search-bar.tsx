@@ -1,6 +1,5 @@
 import { SearchIcon } from "lucide-react";
 import { Button } from "./ui/button";
-import Container from "./container";
 import ClearableInput from "./clearable-input";
 
 type ProductSearchBarProps = {
@@ -15,7 +14,7 @@ export default function ProductSearchBar({
   onSubmit,
 }: ProductSearchBarProps) {
   return (
-    <Container className="flex items-center gap-x-2 bg-gray-200">
+    <div className="flex items-center gap-x-2 flex-1">
       <ClearableInput
         className="bg-background"
         type="text"
@@ -26,6 +25,6 @@ export default function ProductSearchBar({
       <Button onClick={onSubmit}>
         <SearchIcon className="size-4" />
       </Button>
-    </Container>
+    </div>
   );
 }

@@ -11,7 +11,7 @@ export default function ProductList({ products }: ProductListProps) {
       {products.length > 0 ? (
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full flex-1">
           {products.map((product) => (
-            <li key={product.title}>
+            <li key={product._id}>
               <ProductCard product={product} />
             </li>
           ))}
