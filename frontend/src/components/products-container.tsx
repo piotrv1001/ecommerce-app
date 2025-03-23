@@ -6,23 +6,23 @@ import { Link } from "react-router";
 import { useAuthStore } from "@/stores/use-auth-store";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export default function ProductsContainer() {
+  const [search, setSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const { token, logout } = useAuthStore();
   const isLoggedIn = !!token;
-  const {
-    products,
-    search,
-    updateSearch,
-    refetch,
-    ref,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useProducts();
+  const { products, ref, hasNextPage, isFetchingNextPage } =
+    useProducts(searchQuery);
 
   const handleLogout = () => {
     logout();
     toast.success("Logged out successfully");
+  };
+
+  const handleSubmit = () => {
+    setSearchQuery(search);
   };
 
   return (
@@ -30,8 +30,8 @@ export default function ProductsContainer() {
       <div className="flex items-center gap-x-4 bg-gray-200 p-4">
         <ProductSearchBar
           search={search}
-          onSearchChange={updateSearch}
-          onSubmit={refetch}
+          onSearchChange={setSearch}
+          onSubmit={handleSubmit}
         />
         {isLoggedIn ? (
           <Button onClick={handleLogout}>Logout</Button>

@@ -2,25 +2,27 @@ import { Pagination } from "@/types/pagination";
 import { Product } from "@/types/product";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 const fetchProducts = async (
-  { pageParam }: { pageParam?: string | null },
+  { pageParam = null }: { pageParam?: string | null },
   search: string
 ) => {
-  let apiEndpoint = "/api/products";
+  const params: Record<string, any> = {
+    cursor: pageParam,
+    limit: 10,
+  };
   if (search) {
-    apiEndpoint += `?search=${search}`;
+    params.search = search;
   }
-  const res = await axios.get<Pagination<Product[]>>(apiEndpoint, {
-    params: { cursor: pageParam, limit: 10 },
+  const res = await axios.get<Pagination<Product[]>>("/api/products", {
+    params,
   });
   return res.data;
 };
 
-export const useProducts = () => {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
+export const useProducts = (search: string) => {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery<
       Pagination<Product[]>,
       Error,
@@ -28,12 +30,11 @@ export const useProducts = () => {
       readonly string[],
       string | null
     >({
-      queryKey: ["products"],
-      queryFn: (e) => fetchProducts(e, search),
+      queryKey: ["products", search],
+      queryFn: ({ pageParam }) => fetchProducts({ pageParam }, search),
       getNextPageParam: (lastPage) => lastPage.nextCursor,
       initialPageParam: null,
     });
-  const [search, setSearch] = useState("");
   const { ref } = useInView({
     threshold: 1,
     onChange: (inView) => {
@@ -43,17 +44,10 @@ export const useProducts = () => {
     },
   });
 
-  const updateSearch = (search: string) => {
-    setSearch(search);
-  };
-
   return {
     products: data?.pages.flatMap((page) => page.data) ?? [],
-    search,
-    updateSearch,
     hasNextPage,
     isFetchingNextPage,
     ref,
-    refetch,
   };
 };
