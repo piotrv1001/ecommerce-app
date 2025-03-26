@@ -1,7 +1,17 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in-dto';
 import { SignUpDto } from './dto/sign-up-dto';
+import { Roles } from './roles.decorator';
+import { JwtPayload } from 'src/types/jwt-payload';
 
 @Controller('auth')
 export class AuthController {
@@ -17,5 +27,11 @@ export class AuthController {
   @Post('register')
   signUp(@Body() signUpDto: SignUpDto) {
     return this.authService.signUp(signUpDto);
+  }
+
+  @Roles(['admin', 'user'])
+  @Get('verify')
+  verify(@Request() req: { user: JwtPayload }) {
+    return req.user;
   }
 }

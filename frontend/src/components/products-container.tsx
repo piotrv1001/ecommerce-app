@@ -1,12 +1,12 @@
 import ProductList from "@/components/product-list";
 import { useProducts } from "@/hooks/use-products";
 import ProductSearchBar from "@/components/product-search-bar";
-import { LoaderCircleIcon } from "lucide-react";
 import { Link } from "react-router";
 import { useAuthStore } from "@/stores/use-auth-store";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { useState } from "react";
+import LoadingSpinner from "./loading-spinner";
 
 export default function ProductsContainer() {
   const [search, setSearch] = useState("");
@@ -45,9 +45,7 @@ export default function ProductsContainer() {
         <ProductList products={products} />
         {hasNextPage && (
           <div ref={ref} className="p-4 text-center">
-            {isFetchingNextPage && (
-              <LoaderCircleIcon className="animate-spin size-6 mx-auto" />
-            )}
+            {isFetchingNextPage && <LoadingSpinner />}
           </div>
         )}
       </div>

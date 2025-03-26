@@ -8,6 +8,7 @@ import { UsersService } from 'src/users/users.service';
 import { comparePassword } from 'src/utils/bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './dto/sign-up-dto';
+import { JwtPayload } from 'src/types/jwt-payload';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +27,11 @@ export class AuthService {
     if (!isPasswordCorrect) {
       throw new UnauthorizedException('Invalid password');
     }
-    const payload = { sub: user._id, email: user.email, role: user.role };
+    const payload: JwtPayload = {
+      sub: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    };
     return {
       access_token: await this.jwtService.signAsync(payload, {
         secret: process.env.JWT_SECRET,
